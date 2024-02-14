@@ -4,7 +4,8 @@ import { TGadgets } from "./gadgets.interface";
 import { GadgetsModel } from "./gadgets.model";
 
 // add New Gadgets IntoDB
-const addNewGadgetsIntoDB = async (payload: TGadgets) => {
+const addNewGadgetsIntoDB = async (userId: string, payload: TGadgets) => {
+  payload.userId = userId;
   const addGadgets = await GadgetsModel.create(payload);
   return addGadgets;
 };
@@ -37,14 +38,15 @@ const getSingleGadgetsByIdFromDB = async (id: string) => {
 };
 //update Single Gadgets ById FromDB
 const updateSingleGadgetsByIdFromDB = async (
-  id: string,
+  gadgetsId: string,
   payload: Partial<TGadgets>
 ) => {
+  const gadgets = await GadgetsModel.findById(gadgetsId);
   //
-  const gadgets = await GadgetsModel.findById(id);
   if (!gadgets) {
     throw new AppError(httpStatus.NOT_FOUND, "Gadgets not found");
   }
+
   //
   const { features, ...remainingData } = payload;
   const modifiedObj: Record<string, unknown> = { ...remainingData };
@@ -55,10 +57,14 @@ const updateSingleGadgetsByIdFromDB = async (
     }
   }
   //
-  const updatedGadgets = await GadgetsModel.findByIdAndUpdate(id, modifiedObj, {
-    runValidators: true,
-    new: true,
-  });
+  const updatedGadgets = await GadgetsModel.findByIdAndUpdate(
+    gadgetsId,
+    modifiedObj,
+    {
+      runValidators: true,
+      new: true,
+    }
+  );
   return updatedGadgets;
 };
 //get Gadgets FromDB

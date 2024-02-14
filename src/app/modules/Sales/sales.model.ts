@@ -16,6 +16,10 @@ const salesSchema = new Schema<TSales>(
       type: String,
       required: true,
     },
+    contactNumber: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -18,6 +18,9 @@ const gadgetsSchema = new Schema<TGadgets>(
       type: String,
       required: true,
     },
+    userId: {
+      type: String,
+    },
     imageUrl: {
       type: String,
       required: true,

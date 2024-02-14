@@ -7,6 +7,7 @@ export type TFeatures = {
 };
 export type TGadgets = {
   name: string;
+  userId: string;
   imageUrl: string;
   price: number;
   quantity: number;

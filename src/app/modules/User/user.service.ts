@@ -6,8 +6,9 @@ import { UserModel } from "./user.model";
 import { createToken } from "./user.utils";
 
 const registerUserFromDB = async (payload: TRegisterUser) => {
+  const email = payload.email.toLowerCase();
   const user = await UserModel.findOne({
-    email: payload.email,
+    email: email,
   });
 
   if (user) {
@@ -17,13 +18,20 @@ const registerUserFromDB = async (payload: TRegisterUser) => {
     );
   }
 
-  const createUser = await UserModel.create(payload);
+  const createUser = await UserModel.create({ ...payload, email });
   return createUser;
 };
 
 const logInUserFromDB = async (payload: TLoginUser) => {
+  const email = payload.email.toLowerCase();
+
+  const userExits = await UserModel.findOne({ email: email });
+  if (!userExits) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not exits!");
+  }
+
   const user = await UserModel.findOne({
-    email: payload.email,
+    email: email,
     password: payload.password,
   });
 
@@ -33,6 +41,7 @@ const logInUserFromDB = async (payload: TLoginUser) => {
   const jwtPayload = {
     userId: user._id.toString(),
     name: user.name,
+    role: user.role,
   };
   const token = createToken(
     jwtPayload,

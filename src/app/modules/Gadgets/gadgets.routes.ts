@@ -1,32 +1,51 @@
 import express from "express";
 import auth from "../../middlewares/auth";
+import gadgetOwnerAuth from "../../middlewares/gadgetOwnerAuth";
 import validateRequest from "../../middlewares/validateRequest";
+import { userRole } from "../User/user.constant";
 import { gadgetsControllers } from "./gadgets.controller";
 import { gadgetsValidation } from "./gadgets.validation";
 const router = express.Router();
 
 router.post(
   "/",
-  auth(),
+  auth(userRole.User, userRole.Manager),
   validateRequest(gadgetsValidation.addNewGadgetsSchema),
   gadgetsControllers.addNewGadgets
 );
 //
 router.patch(
   "/:gadgetsId",
-  auth(),
+  auth(userRole.User, userRole.Manager),
+  gadgetOwnerAuth(),
   validateRequest(gadgetsValidation.updateGadgetsSchema),
   gadgetsControllers.updateSingleGadgetsById
 );
 //
-router.delete("/", auth(), gadgetsControllers.deleteMultipleGadgets);
+router.delete(
+  "/",
+  auth(userRole.User, userRole.Manager),
+  gadgetsControllers.deleteMultipleGadgets
+);
 //
-router.delete("/:gadgetsId", auth(), gadgetsControllers.deleteGadgets);
+router.delete(
+  "/:gadgetsId",
+  auth(userRole.User, userRole.Manager),
+  gadgetsControllers.deleteGadgets
+);
 //
 //
-router.get("/:gadgetsId", auth(), gadgetsControllers.getSingleGadgetsById);
+router.get(
+  "/:gadgetsId",
+  auth(userRole.User, userRole.Manager),
+  gadgetsControllers.getSingleGadgetsById
+);
 //
-router.get("/", auth(), gadgetsControllers.getGadgets);
+router.get(
+  "/",
+  auth(userRole.User, userRole.Manager),
+  gadgetsControllers.getGadgets
+);
 
 //
 export const gadgetsRoutes = router;

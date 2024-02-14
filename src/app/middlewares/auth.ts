@@ -3,9 +3,11 @@ import httpStatus from "http-status";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import AppError from "../errors/AppError";
+import { TUserRole } from "../modules/User/user.interface";
+import { UserModel } from "../modules/User/user.model";
 import catchAsync from "../utils/catchAsync";
 
-const auth = () => {
+const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
 
@@ -24,9 +26,25 @@ const auth = () => {
         config.jwt_access_secret as string
       ) as JwtPayload;
 
+      const { role, userId } = decoded;
+
+      const user = await UserModel.findById(userId);
+
+      if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+      }
+
+      if (requiredRoles && !requiredRoles.includes(role)) {
+        throw new AppError(
+          httpStatus.UNAUTHORIZED,
+          "You Don't Have Access On This!"
+        );
+      }
+
+      (req as any).user = decoded as JwtPayload & { role: string };
       next();
-    } catch (err) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+    } catch (err: any) {
+      throw new AppError(httpStatus.UNAUTHORIZED, err.message);
     }
   });
 };

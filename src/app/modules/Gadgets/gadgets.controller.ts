@@ -4,7 +4,9 @@ import sendResponse from "../../utils/sendResponse";
 import { gadgetsServices } from "./gadgets.service";
 
 const addNewGadgets = catchAsync(async (req, res) => {
-  const result = await gadgetsServices.addNewGadgetsIntoDB(req.body);
+  const { userId } = (req as any).user;
+
+  const result = await gadgetsServices.addNewGadgetsIntoDB(userId, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -54,9 +56,11 @@ const getSingleGadgetsById = catchAsync(async (req, res) => {
 });
 //
 const updateSingleGadgetsById = catchAsync(async (req, res) => {
+  const { body, params } = req;
+
   const updatedGagets = await gadgetsServices.updateSingleGadgetsByIdFromDB(
-    req.params.gadgetsId,
-    req.body
+    params.gadgetsId,
+    body
   );
 
   sendResponse(res, {
