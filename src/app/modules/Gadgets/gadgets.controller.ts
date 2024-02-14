@@ -72,7 +72,8 @@ const updateSingleGadgetsById = catchAsync(async (req, res) => {
 });
 
 const getGadgets = catchAsync(async (req, res) => {
-  const gagets = await gadgetsServices.getGadgetsFromDB(req.query);
+  const authUser = (req as any).user;
+  const gagets = await gadgetsServices.getGadgetsFromDB(authUser, req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

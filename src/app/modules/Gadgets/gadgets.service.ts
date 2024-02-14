@@ -1,5 +1,7 @@
 import httpStatus from "http-status";
+import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errors/AppError";
+import { userRole } from "../User/user.constant";
 import { TGadgets } from "./gadgets.interface";
 import { GadgetsModel } from "./gadgets.model";
 
@@ -68,7 +70,10 @@ const updateSingleGadgetsByIdFromDB = async (
   return updatedGadgets;
 };
 //get Gadgets FromDB
-const getGadgetsFromDB = async (query: Record<string, unknown>) => {
+const getGadgetsFromDB = async (
+  authUser: JwtPayload,
+  query: Record<string, unknown>
+) => {
   const searchFields = [
     "name",
     "Category",
@@ -86,23 +91,45 @@ const getGadgetsFromDB = async (query: Record<string, unknown>) => {
     "features.weight",
     "features.dimensions",
   ];
-
-  const Gadgetss = await GadgetsModel.find({
-    $and: [
-      {
-        $or: searchFields.map((field) => ({
-          [field]: { $regex: query?.searchTerm || "", $options: "i" },
-        })),
-      },
-      {
-        price: {
-          $gte: query.minPrice || 0,
-          $lte: query.maxPrice || 1000000,
+  let Gadgets;
+  if (authUser.role === userRole.Manager) {
+    Gadgets = await GadgetsModel.find({
+      $and: [
+        {
+          $or: searchFields.map((field) => ({
+            [field]: { $regex: query?.searchTerm || "", $options: "i" },
+          })),
         },
-      },
-    ],
-  });
-  return Gadgetss;
+        {
+          price: {
+            $gte: query.minPrice || 0,
+            $lte: query.maxPrice || 1000000,
+          },
+        },
+      ],
+    });
+  } else {
+    Gadgets = await GadgetsModel.find({
+      $and: [
+        {
+          userId: authUser.userId,
+        },
+        {
+          $or: searchFields.map((field) => ({
+            [field]: { $regex: query?.searchTerm || "", $options: "i" },
+          })),
+        },
+        {
+          price: {
+            $gte: query.minPrice || 0,
+            $lte: query.maxPrice || 1000000,
+          },
+        },
+      ],
+    });
+  }
+
+  return Gadgets;
 };
 
 //
