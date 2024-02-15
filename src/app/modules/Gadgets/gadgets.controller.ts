@@ -11,7 +11,7 @@ const addNewGadgets = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "gadgets added successfull",
+    message: "gadgets added successfull!",
     data: result,
   });
 });
@@ -24,7 +24,7 @@ const deleteGadgets = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "gadgets deleted successfull",
+    message: "gadgets deleted successfull!",
     data: null,
   });
 });
@@ -37,7 +37,7 @@ const deleteMultipleGadgets = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "gadgets are deleted successfull",
+    message: "gadgets are deleted successfull!",
     data: null,
   });
 });
@@ -50,7 +50,7 @@ const getSingleGadgetsById = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "gadgets retrive successfull",
+    message: "gadgets retrive successfull!",
     data: gagets,
   });
 });
@@ -66,7 +66,7 @@ const updateSingleGadgetsById = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "gadgets updated successfull",
+    message: "gadgets updated successfull!",
     data: updatedGagets,
   });
 });
@@ -78,7 +78,7 @@ const getGadgets = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "gadgets are retrive successfull",
+    message: "gadgets are retrive successfull!",
     data: gagets,
   });
 });
