@@ -9,7 +9,7 @@ const createSales = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "sales created successfull",
+    message: "sales created successfull!",
     data: result,
   });
 });
@@ -20,7 +20,7 @@ const getSales = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "sales retrive successfull",
+    message: "sales retrive successfull!",
     data: result,
   });
 });
@@ -31,7 +31,7 @@ const getAvailableGadgetsForSale = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Available gadgets retrive successfull",
+    message: "Available gadgets retrive successfull!",
     data: result,
   });
 });
