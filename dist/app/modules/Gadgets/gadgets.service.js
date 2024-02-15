@@ -26,9 +26,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.gadgetsServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const user_constant_1 = require("../User/user.constant");
 const gadgets_model_1 = require("./gadgets.model");
 // add New Gadgets IntoDB
-const addNewGadgetsIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const addNewGadgetsIntoDB = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    payload.userId = userId;
     const addGadgets = yield gadgets_model_1.GadgetsModel.create(payload);
     return addGadgets;
 });
@@ -59,9 +61,9 @@ const getSingleGadgetsByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, fun
     return gadgets;
 });
 //update Single Gadgets ById FromDB
-const updateSingleGadgetsByIdFromDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateSingleGadgetsByIdFromDB = (gadgetsId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const gadgets = yield gadgets_model_1.GadgetsModel.findById(gadgetsId);
     //
-    const gadgets = yield gadgets_model_1.GadgetsModel.findById(id);
     if (!gadgets) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "Gadgets not found");
     }
@@ -75,14 +77,14 @@ const updateSingleGadgetsByIdFromDB = (id, payload) => __awaiter(void 0, void 0,
         }
     }
     //
-    const updatedGadgets = yield gadgets_model_1.GadgetsModel.findByIdAndUpdate(id, modifiedObj, {
+    const updatedGadgets = yield gadgets_model_1.GadgetsModel.findByIdAndUpdate(gadgetsId, modifiedObj, {
         runValidators: true,
         new: true,
     });
     return updatedGadgets;
 });
 //get Gadgets FromDB
-const getGadgetsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+const getGadgetsFromDB = (authUser, query) => __awaiter(void 0, void 0, void 0, function* () {
     const searchFields = [
         "name",
         "Category",
@@ -100,22 +102,45 @@ const getGadgetsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* 
         "features.weight",
         "features.dimensions",
     ];
-    const Gadgetss = yield gadgets_model_1.GadgetsModel.find({
-        $and: [
-            {
-                $or: searchFields.map((field) => ({
-                    [field]: { $regex: (query === null || query === void 0 ? void 0 : query.searchTerm) || "", $options: "i" },
-                })),
-            },
-            {
-                price: {
-                    $gte: query.minPrice || 0,
-                    $lte: query.maxPrice || 1000000,
+    let Gadgets;
+    if (authUser.role === user_constant_1.userRole.Manager) {
+        Gadgets = yield gadgets_model_1.GadgetsModel.find({
+            $and: [
+                {
+                    $or: searchFields.map((field) => ({
+                        [field]: { $regex: (query === null || query === void 0 ? void 0 : query.searchTerm) || "", $options: "i" },
+                    })),
                 },
-            },
-        ],
-    });
-    return Gadgetss;
+                {
+                    price: {
+                        $gte: query.minPrice || 0,
+                        $lte: query.maxPrice || 1000000,
+                    },
+                },
+            ],
+        });
+    }
+    else {
+        Gadgets = yield gadgets_model_1.GadgetsModel.find({
+            $and: [
+                {
+                    userId: authUser.userId,
+                },
+                {
+                    $or: searchFields.map((field) => ({
+                        [field]: { $regex: (query === null || query === void 0 ? void 0 : query.searchTerm) || "", $options: "i" },
+                    })),
+                },
+                {
+                    price: {
+                        $gte: query.minPrice || 0,
+                        $lte: query.maxPrice || 1000000,
+                    },
+                },
+            ],
+        });
+    }
+    return Gadgets;
 });
 //
 exports.gadgetsServices = {

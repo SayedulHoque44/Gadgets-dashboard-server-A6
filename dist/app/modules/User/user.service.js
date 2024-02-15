@@ -19,18 +19,24 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const user_model_1 = require("./user.model");
 const user_utils_1 = require("./user.utils");
 const registerUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = payload.email.toLowerCase();
     const user = yield user_model_1.UserModel.findOne({
-        email: payload.email,
+        email: email,
     });
     if (user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User Already Exits! please Login!");
     }
-    const createUser = yield user_model_1.UserModel.create(payload);
+    const createUser = yield user_model_1.UserModel.create(Object.assign(Object.assign({}, payload), { email }));
     return createUser;
 });
 const logInUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = payload.email.toLowerCase();
+    const userExits = yield user_model_1.UserModel.findOne({ email: email });
+    if (!userExits) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not exits!");
+    }
     const user = yield user_model_1.UserModel.findOne({
-        email: payload.email,
+        email: email,
         password: payload.password,
     });
     if (!user) {
@@ -39,6 +45,7 @@ const logInUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function*
     const jwtPayload = {
         userId: user._id.toString(),
         name: user.name,
+        role: user.role,
     };
     const token = (0, user_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expires_in);
     return { token };

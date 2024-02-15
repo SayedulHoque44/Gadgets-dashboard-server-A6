@@ -23,7 +23,7 @@ const registerUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "User register successfull",
+        message: "User register successfull!",
         data: null,
     });
 }));
@@ -33,7 +33,7 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "User login successfull",
+        message: "User login successfull!",
         data: result,
     });
 }));

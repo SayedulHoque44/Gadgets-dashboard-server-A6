@@ -22,7 +22,7 @@ const createSales = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "sales created successfull",
+        message: "sales created successfull!",
         data: result,
     });
 }));
@@ -31,7 +31,7 @@ const getSales = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "sales retrive successfull",
+        message: "sales retrive successfull!",
         data: result,
     });
 }));
@@ -40,7 +40,7 @@ const getAvailableGadgetsForSale = (0, catchAsync_1.default)((req, res) => __awa
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "Available gadgets retrive successfull",
+        message: "Available gadgets retrive successfull!",
         data: result,
     });
 }));

@@ -16,6 +16,10 @@ const salesSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    contactNumber: {
+        type: String,
+        required: true,
+    },
 }, { timestamps: true });
 //
 exports.SalesModel = (0, mongoose_1.model)("sales", salesSchema);

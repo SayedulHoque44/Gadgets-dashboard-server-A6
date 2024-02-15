@@ -14,6 +14,9 @@ const gadgetsSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    userId: {
+        type: String,
+    },
     imageUrl: {
         type: String,
         required: true,

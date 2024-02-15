@@ -16,8 +16,9 @@ const http_status_1 = __importDefault(require("http-status"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const AppError_1 = __importDefault(require("../errors/AppError"));
+const user_model_1 = require("../modules/User/user.model");
 const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
-const auth = () => {
+const auth = (...requiredRoles) => {
     return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const token = req.headers.authorization;
         // checking if the token is missing
@@ -28,10 +29,19 @@ const auth = () => {
         let decoded;
         try {
             decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
+            const { role, userId } = decoded;
+            const user = yield user_model_1.UserModel.findById(userId);
+            if (!user) {
+                throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User not found!");
+            }
+            if (requiredRoles && !requiredRoles.includes(role)) {
+                throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "You Don't Have Access On This! unauthorized!");
+            }
+            req.user = decoded;
             next();
         }
         catch (err) {
-            throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "Unauthorized");
+            throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, err.message);
         }
     }));
 };
