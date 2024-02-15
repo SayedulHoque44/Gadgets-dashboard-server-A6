@@ -2,6 +2,6 @@
 
 ### setup
 
-- "build": "tsc", --> npm run build
+- "build": "tsc ", --> npm run build
 - "start": "node ./dist/server.js", --> npm run start
 - "dev": "tsnd --respawn ./src/server.ts", --> npm run dev
