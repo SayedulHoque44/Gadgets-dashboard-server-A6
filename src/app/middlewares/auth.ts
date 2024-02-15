@@ -37,7 +37,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       if (requiredRoles && !requiredRoles.includes(role)) {
         throw new AppError(
           httpStatus.UNAUTHORIZED,
-          "You Don't Have Access On This!"
+          "You Don't Have Access On This! unauthorized!"
         );
       }
 
